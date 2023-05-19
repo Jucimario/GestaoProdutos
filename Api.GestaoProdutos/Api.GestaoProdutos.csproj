@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\v1\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Application.GestaoProdutos\Application.GestaoProdutos.csproj" />
   </ItemGroup>
 
