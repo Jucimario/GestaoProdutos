@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Domain.GestaoProdutos.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
-namespace Application.GestaoProdutos.Context
+namespace Application.GestaoProdutos.Context;
+
+public class AppDbContext : IdentityDbContext
 {
-    public class AppDbContext
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
+
+    public DbSet<Produto> Produtos { get; set; }
+
 }

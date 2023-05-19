@@ -1,3 +1,5 @@
+using Application.GestaoProdutos.Context;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,12 @@ builder.Services.AddSwaggerGen(c =>
         });
 });
 
+//Conexão banco de dados MYSQL
+string mySqlConnection = builder.Configuration["ConnectionStrings:MySQLConnectionString"];
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+                    options.UseMySql(mySqlConnection,
+                    ServerVersion.AutoDetect(mySqlConnection)));
 
 #endregion
 
