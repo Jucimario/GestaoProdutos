@@ -1,5 +1,6 @@
 ﻿using Application.GestaoProdutos.Services.v1;
 using Application.GestaoProdutos.Services.v1.Interfaces;
+using Domain.GestaoProdutos.Dtos.ProdutoDtos;
 using Domain.GestaoProdutos.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -24,33 +25,17 @@ namespace Api.GestaoProdutos.Controllers.v1
         [HttpPost("/AdicionarProduto")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Produto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]        
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult AdicionarProduto([FromBody] Produto produto)
-        {
-            if (produto is null)
-                return BadRequest("Invalid data");
-
-            var produtoNovo = _produtoService.Create(produto);
-
-            return CreatedAtAction(nameof(ConsultaProdutoId), new { id = produtoNovo.Id }, produtoNovo);
-        }
-
-        [HttpGet("/ListarProdutos")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Produto))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]        
-        public ActionResult<ICollection<Produto>> ListarProdutos([FromQuery] int? skip = 0, [FromQuery] int? take = 50)
         {
             try
             {
-                if (skip == null || take == null)
-                    return BadRequest($"Configurações gerais não disponíveis, informe todos os parametros");
+                if (produto is null)
+                    return BadRequest("Invalid data");
 
-                var produtoList = _produtoService.FindAll((int)skip, (int)take);
-                if (produtoList == null)
-                    return NotFound();
+                var produtoNovo = _produtoService.Create(produto);
 
-                return Ok(produtoList);
+                return CreatedAtAction(nameof(ConsultaProdutoId), new { id = produtoNovo.Result.Id }, produtoNovo.Result);
             }
             catch (Exception ex)
             {
@@ -59,15 +44,39 @@ namespace Api.GestaoProdutos.Controllers.v1
             }
         }
 
-        [HttpGet("/ConsultaProdutoId/{id}")]
+        [HttpGet("/ListarProdutos/nome/{nome}/skip/{skip:int}/take/{take:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<FilterProdutoDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<ICollection<FilterProdutoDto>> ListarProdutos([FromRoute] string? nome,[FromRoute] int? skip, [FromRoute] int? take)
+        {
+            try
+            {
+                if (skip == null || take == null)
+                    return BadRequest($"Configurações gerais não disponíveis, informe todos os parametros");
+
+                var produtoList = _produtoService.FindAll(nome, (int)skip, (int)take);
+                if (produtoList == null)
+                    return NotFound();
+
+                return Ok(produtoList.Result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest,
+                         ex.Message);
+            }
+        }
+
+        [HttpGet("/ConsultaProdutoId/{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Produto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]        
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult ConsultaProdutoId(int id)
         {
             try
             {
-                if (id == null)
+                if (id <= 0)
                     return BadRequest($"Configurações gerais não disponíveis, informe todos os parametros");
 
                 var produto = _produtoService.FindByID(id);
@@ -101,13 +110,16 @@ namespace Api.GestaoProdutos.Controllers.v1
             }
         }
 
-        [HttpDelete("/DeletarProduto/{id}")]
+        [HttpDelete("/DeletarProduto/{id:int}")]
         public ActionResult DeletarProduto(int id)
         {
             try
             {
+                if (id <= 0)
+                    return BadRequest($"Configurações gerais não disponíveis, informe todos os parametros");
+
                 var produto = _produtoService.Disable(id);
-                if (produto == null)               
+                if (produto == null)
                     return NotFound($"Produto não encontrado...");
 
                 return Ok(produto);

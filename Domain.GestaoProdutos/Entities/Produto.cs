@@ -11,7 +11,9 @@ public class Produto : BaseEntity
 
     public bool Situacao { get; set; }
 
+    
     public DateTime? DataFabricacao { get; set; }
+    
 
     public DateTime? DataValidade { get; set; }
 }

@@ -5,13 +5,23 @@ using Application.GestaoProdutos.Services.v1.Interfaces;
 using Application.GestaoProdutos.Services.v1;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using Application.GestaoProdutos.Validator;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 #region Add services to the container.
 
+
 builder.Services.AddControllers();
+
+//Configurando o FluentValidation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining<ProdutoValidator>();
+
 
 //Injeção de Dependencia
 builder.Services.AddScoped(typeof(IBaseInterface<>), typeof(GenericService<>));
@@ -41,6 +51,9 @@ string mySqlConnection = builder.Configuration["ConnectionStrings:MySQLConnectio
 builder.Services.AddDbContext<AppDbContext>(options =>
                     options.UseMySql(mySqlConnection,
                     ServerVersion.AutoDetect(mySqlConnection)));
+
+//Inicio - Configuracao AutoMapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 #endregion
 
