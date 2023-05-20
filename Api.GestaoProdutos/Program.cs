@@ -1,4 +1,8 @@
 using Application.GestaoProdutos.Context;
+using Application.GestaoProdutos.Services.v1.Generic;
+using Application.GestaoProdutos.Services.v1.Interfaces.IGenerics;
+using Application.GestaoProdutos.Services.v1.Interfaces;
+using Application.GestaoProdutos.Services.v1;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -8,6 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 #region Add services to the container.
 
 builder.Services.AddControllers();
+
+//Injeção de Dependencia
+builder.Services.AddScoped(typeof(IBaseInterface<>), typeof(GenericService<>));
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -44,7 +52,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.DefaultModelsExpandDepth(-1); // desabilita o schemas do swagger       
+    });
 }
 
 app.UseHttpsRedirection();

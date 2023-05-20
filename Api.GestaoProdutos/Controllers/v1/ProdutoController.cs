@@ -24,8 +24,7 @@ namespace Api.GestaoProdutos.Controllers.v1
         [HttpPost("/AdicionarProduto")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Produto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]        
         public ActionResult AdicionarProduto([FromBody] Produto produto)
         {
             if (produto is null)
@@ -39,8 +38,7 @@ namespace Api.GestaoProdutos.Controllers.v1
         [HttpGet("/ListarProdutos")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Produto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]        
         public ActionResult<ICollection<Produto>> ListarProdutos([FromQuery] int? skip = 0, [FromQuery] int? take = 50)
         {
             try
@@ -48,46 +46,40 @@ namespace Api.GestaoProdutos.Controllers.v1
                 if (skip == null || take == null)
                     return BadRequest($"Configurações gerais não disponíveis, informe todos os parametros");
 
-
                 var produtoList = _produtoService.FindAll((int)skip, (int)take);
-
                 if (produtoList == null)
                     return NotFound();
 
                 return Ok(produtoList);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status400BadRequest,
-                         "Houve um problema no gerenciamento do seu pedido.");
+                         ex.Message);
             }
         }
 
         [HttpGet("/ConsultaProdutoId/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Produto))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]        
         public ActionResult ConsultaProdutoId(int id)
         {
             try
             {
                 if (id == null)
-                {
                     return BadRequest($"Configurações gerais não disponíveis, informe todos os parametros");
-                }
 
                 var produto = _produtoService.FindByID(id);
-
                 if (produto == null)
                     return NotFound($"Produto não encontrado...");
 
                 return Ok(produto);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status400BadRequest,
-                         "Houve um problema no gerenciamento do seu pedido.");
+                         ex.Message);
             }
         }
 
@@ -98,16 +90,14 @@ namespace Api.GestaoProdutos.Controllers.v1
             {
                 var produtoUp = _produtoService.Update(produto);
                 if (produtoUp == null)
-                {
                     return NotFound($"Produto não encontrado...");
-                }
 
                 return Ok(produtoUp);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status400BadRequest,
-                         "Houve um problema no gerenciamento do seu pedido.");
+                         ex.Message);
             }
         }
 
@@ -117,17 +107,15 @@ namespace Api.GestaoProdutos.Controllers.v1
             try
             {
                 var produto = _produtoService.Disable(id);
-                if (produto == null)
-                {
+                if (produto == null)               
                     return NotFound($"Produto não encontrado...");
-                }
 
                 return Ok(produto);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status400BadRequest,
-                         "Houve um problema no gerenciamento do seu pedido.");
+                         ex.Message);
             }
         }
 

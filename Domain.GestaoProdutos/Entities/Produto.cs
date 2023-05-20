@@ -1,13 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Domain.GestaoProdutos.Entities.Base;
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain.GestaoProdutos.Entities;
 
-public class Produto
+public class Produto : BaseEntity
 {
-    [Key]
-    [Required]
-    public int Id { get; set; }
-
     [Required]
     [MaxLength(200)]
     public string Descricao { get; set; }
