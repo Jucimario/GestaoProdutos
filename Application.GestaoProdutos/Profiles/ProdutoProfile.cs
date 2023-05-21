@@ -2,14 +2,13 @@
 using Domain.GestaoProdutos.Entities;
 using AutoMapper;
 
-namespace Application.GestaoProdutos.Profiles
+namespace Application.GestaoProdutos.Profiles;
+
+public class ProdutoProfile : Profile
 {
-    public class ProdutoProfile : Profile
+    public ProdutoProfile()
     {
-        public ProdutoProfile()
-        {
-            CreateMap<ProdutoDto, Produto>();
-            CreateMap<Produto, ProdutoDto>();
-        }
+        CreateMap<ProdutoDto, Produto>();
+        CreateMap<Produto, ProdutoDto>();
     }
 }

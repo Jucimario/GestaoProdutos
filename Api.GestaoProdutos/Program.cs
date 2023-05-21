@@ -8,6 +8,10 @@ using Microsoft.OpenApi.Models;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using Application.GestaoProdutos.Validator;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +26,10 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssemblyContaining<ProdutoValidator>();
 
-
 //Injeção de Dependencia
 builder.Services.AddScoped(typeof(IBaseInterface<>), typeof(GenericService<>));
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -43,6 +47,31 @@ builder.Services.AddSwaggerGen(c =>
                 Url = new Uri("https://github.com/jucimario")
             }
         });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Type = SecuritySchemeType.ApiKey,
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        Description = "Header de autorização JWT favor informar Bearer + (Token).",
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+       {
+          new OpenApiSecurityScheme
+          {
+             Reference = new OpenApiReference
+             {
+                 Type = ReferenceType.SecurityScheme,
+                 Id = "Bearer"
+             }
+          },
+          new string[] {}
+       }
+    });
 });
 
 //Conexão banco de dados MYSQL
@@ -51,6 +80,27 @@ string mySqlConnection = builder.Configuration["ConnectionStrings:MySQLConnectio
 builder.Services.AddDbContext<AppDbContext>(options =>
                     options.UseMySql(mySqlConnection,
                     ServerVersion.AutoDetect(mySqlConnection)));
+
+//configurando Identity para autenticação
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
+
+//Inluindo o manipulador de autenticação baseada em JWT usando o Bearer
+builder.Services.AddAuthentication(
+    JwtBearerDefaults.AuthenticationScheme).
+    AddJwtBearer(options =>
+     options.TokenValidationParameters = new TokenValidationParameters
+     {
+         ValidateIssuer = true,
+         ValidateAudience = true,
+         ValidateLifetime = true,
+         ValidateIssuerSigningKey = true,
+
+         ValidIssuer = builder.Configuration["ConfigurationToken:Issuer"],
+         ValidAudience = builder.Configuration["ConfigurationToken:Audience"],
+         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]))
+     });
 
 //Inicio - Configuracao AutoMapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -72,7 +122,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
