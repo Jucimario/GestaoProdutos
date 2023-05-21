@@ -5,9 +5,6 @@ using AutoMapper;
 using Domain.GestaoProdutos.Dtos.ProdutoDtos;
 using Domain.GestaoProdutos.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System;
-using System.Xml.Linq;
 
 namespace Application.GestaoProdutos.Services.v1;
 
@@ -21,7 +18,6 @@ public class ProdutoService : GenericService<Produto>, IProdutoService
 
     public async Task<FilterProdutoDto> FindAll(string nome, int skip = 0, int take = 20)
     {
-
         if (skip <= 0 & take < 0)
             throw new ArgumentException("Número de paginação incorreta");
 
@@ -51,15 +47,16 @@ public class ProdutoService : GenericService<Produto>, IProdutoService
             throw;
         }
     }
+
     private FilterProdutoDto EfetuarFiltro(string nome, int skip, int take)
     {
         var totalResults = string.IsNullOrEmpty(nome) ?
-                                                         _context.Produtos.Count() :
-                                                         _context.Produtos.Where(p => p.Descricao.ToUpper().Contains(nome)).Count();
+                                                      _context.Produtos.Count() :
+                                                      _context.Produtos.Where(p => p.Descricao.ToUpper().Contains(nome)).Count();
 
         var produtos = string.IsNullOrEmpty(nome) ?
-                                                   _context.Produtos.AsNoTracking().Skip(skip).Take(take).ToList() :
-                                                   _context.Produtos.AsNoTracking().Where(p => p.Descricao.ToUpper().Contains(nome)).Skip(skip).Take(take).ToList();
+                                                 _context.Produtos.AsNoTracking().Skip(skip).Take(take).ToList() :
+                                                 _context.Produtos.AsNoTracking().Where(p => p.Descricao.ToUpper().Contains(nome)).Skip(skip).Take(take).ToList();
 
         var produtosMap = _mapper.Map<ICollection<ProdutoDto>>(produtos);
 

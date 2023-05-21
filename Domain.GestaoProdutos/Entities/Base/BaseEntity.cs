@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace Domain.GestaoProdutos.Entities.Base;
-
 public class BaseEntity
 {
     [Key]
