@@ -43,11 +43,11 @@ public class ProdutoController : ControllerBase
         }
     }
 
-    [HttpGet("/ListarProdutos/nome/{nome}/skip/{skip:int}/take/{take:int}")]
+    [HttpGet("/ListarProdutos/skip/{skip:int}/take/{take:int}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<FilterProdutoDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task< ActionResult<ICollection<FilterProdutoDto>>> ListarProdutos([FromRoute] string? nome,[FromRoute] int? skip, [FromRoute] int? take)
+    public async Task< ActionResult<ICollection<FilterProdutoDto>>> ListarProdutos([FromQuery] string? nome,[FromRoute] int? skip, [FromRoute] int? take)
     {
         try
         {
@@ -96,7 +96,7 @@ public class ProdutoController : ControllerBase
     {
         try
         {
-            var produtoUp = _produtoService.Update(produto);
+            var produtoUp = await _produtoService.Update(produto);
             if (produtoUp == null)
                 return NotFound($"Produto não encontrado...");
 
