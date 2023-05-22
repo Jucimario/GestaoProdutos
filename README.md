@@ -43,7 +43,7 @@ Antes de começar, você vai precisar ter as seguintes ferramentas:
 
 Após autenticação é possivel informar o token de autenticação direto no Swagger informando Bearer (Token)
 
-![Screenshot_17](https://github.com/Jucimario/GestaoProdutos/assets/8194957/ebd0a78b-56fc-4441-b3d6-f85673d969a9)
+![Screenshot_17](https://github.com/Jucimario/GestaoProdutos/assets/8194957/5a4c35c1-f3b7-4d96-b7d6-2b07aeabca3f)
 
 #### Produto
 
@@ -62,5 +62,5 @@ Após autenticação é possivel informar o token de autenticação direto no Sw
 - `Delete/DeletarProduto`: Efetua o delete lógico de um produto bastando informar o Id do mesmo.
 
 
-![Screenshot_16](https://github.com/Jucimario/GestaoProdutos/assets/8194957/1c61613b-be85-4a35-aa33-3250886ca4f3)
+![Screenshot_16](https://github.com/Jucimario/GestaoProdutos/assets/8194957/b160bc53-9860-4475-af2d-e51b8e11633a)
 
