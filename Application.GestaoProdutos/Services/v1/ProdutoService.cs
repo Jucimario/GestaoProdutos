@@ -26,28 +26,6 @@ public class ProdutoService : GenericService<Produto>, IProdutoService
 
         return EfetuarFiltro(nome, skip, take);
     }
-
-    public async Task<Produto?> Disable(int id)
-    {
-        try
-        {
-            var produto = _context.Produtos.SingleOrDefault(p => p.Id.Equals(id));
-            if (produto == null)
-                return null;
-
-            produto.Situacao = false;
-
-            _context.Entry(produto).CurrentValues.SetValues(produto);
-            _context.SaveChanges();
-
-            return produto;
-        }
-        catch (Exception)
-        {
-            throw;
-        }
-    }
-
     private FilterProdutoDto EfetuarFiltro(string nome, int skip, int take)
     {
         var totalResults = string.IsNullOrEmpty(nome) ?

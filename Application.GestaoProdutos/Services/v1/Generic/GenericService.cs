@@ -1,5 +1,6 @@
 ﻿using Application.GestaoProdutos.Context;
 using Application.GestaoProdutos.Services.v1.Interfaces.IGenerics;
+using Domain.GestaoProdutos.Entities;
 using Domain.GestaoProdutos.Entities.Base;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,7 +39,9 @@ public class GenericService<T> : IBaseInterface<T> where T : BaseEntity
             if (result == null)
                 return false;
 
-            _dataset.Remove(result);
+            result.IsDelete = true;
+
+            _context.Entry(result).CurrentValues.SetValues(result);
             _context.SaveChanges();
 
             return true;
@@ -49,12 +52,12 @@ public class GenericService<T> : IBaseInterface<T> where T : BaseEntity
         }
     }
 
-    public async Task<T?> FindByID(int id)
+    public async Task<T> FindByID(int id)
     {
-        return _dataset.AsNoTracking().FirstOrDefault(p => p.Id.Equals(id));       
+        return _dataset.AsNoTracking().FirstOrDefault(p => p.Id.Equals(id));
     }
 
-    public async Task<T?> Update(T item)
+    public async Task<T> Update(T item)
     {
         try
         {

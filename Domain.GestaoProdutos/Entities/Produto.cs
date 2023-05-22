@@ -10,10 +10,9 @@ public class Produto : BaseEntity
     public string Descricao { get; set; }
 
     public bool Situacao { get; set; }
-
     
-    public DateTime? DataFabricacao { get; set; }
-    
+    public DateTime? DataFabricacao { get; set; }    
 
     public DateTime? DataValidade { get; set; }
-}
+
+  }
