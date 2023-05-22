@@ -117,8 +117,8 @@ public class ProdutoController : ControllerBase
             if (id <= 0)
                 return BadRequest($"Configurações gerais não disponíveis, informe todos os parametros");
 
-            var produto = await _produtoService.Delete(id);
-            if (!produto)
+            var produto = await _produtoService.Disable(id);
+            if (produto == null)
                 return NotFound($"Produto não encontrado...");
 
             return Ok(produto);

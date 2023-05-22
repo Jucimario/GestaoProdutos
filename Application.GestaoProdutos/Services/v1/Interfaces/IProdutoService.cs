@@ -6,6 +6,8 @@ namespace Application.GestaoProdutos.Services.v1.Interfaces;
 
 public interface IProdutoService : IBaseInterface<Produto>
 {
-    public Task<FilterProdutoDto> FindAll(string nome, int skip, int take);     
+    public Task<FilterProdutoDto> FindAll(string nome, int skip, int take);
+
+    public Task<Produto> Disable(int id);
 
 }
