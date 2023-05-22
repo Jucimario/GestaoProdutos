@@ -26,6 +26,29 @@ public class ProdutoService : GenericService<Produto>, IProdutoService
 
         return EfetuarFiltro(nome, skip, take);
     }
+
+    public async Task<Produto?> Disable(int id)
+    {
+        try
+        {
+            var produto = _context.Produtos.SingleOrDefault(p => p.Id.Equals(id));
+            if (produto == null)
+                return null;
+
+            produto.Situacao = false;
+            produto.IsDelete = true;
+
+            _context.Entry(produto).CurrentValues.SetValues(produto);
+            _context.SaveChanges();
+
+            return produto;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
     private FilterProdutoDto EfetuarFiltro(string nome, int skip, int take)
     {
         var totalResults = string.IsNullOrEmpty(nome) ?
@@ -42,7 +65,7 @@ public class ProdutoService : GenericService<Produto>, IProdutoService
         {
             Skip = skip,
             Take = take,
-            PaginaAtual = (skip / take) + ((skip % take) > 0 ? 1 : 0),
+            PaginaAtual = ((skip +1)/ take) + (((skip + 1) % take) > 0 ? 1 : 0),
             TotalPagina = (totalResults / take) + ((totalResults % take) > 0 ? 1 : 0),
             TotalRegistro = totalResults,
             Produtos = produtosMap

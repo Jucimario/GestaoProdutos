@@ -1,5 +1,6 @@
 ﻿using Domain.GestaoProdutos.Entities.Base;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Domain.GestaoProdutos.Entities;
 
@@ -15,4 +16,6 @@ public class Produto : BaseEntity
 
     public DateTime? DataValidade { get; set; }
 
-  }
+    [JsonIgnore]
+    public bool IsDelete { get; set; }
+}

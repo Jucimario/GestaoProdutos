@@ -37,11 +37,9 @@ public class GenericService<T> : IBaseInterface<T> where T : BaseEntity
         {
             var result = _dataset.SingleOrDefault(p => p.Id.Equals(id));
             if (result == null)
-                return false;
+                return false;            
 
-            result.IsDelete = true;
-
-            _context.Entry(result).CurrentValues.SetValues(result);
+            _context.Remove(result);
             _context.SaveChanges();
 
             return true;
