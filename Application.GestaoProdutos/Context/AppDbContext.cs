@@ -12,4 +12,10 @@ public class AppDbContext : IdentityDbContext
 
     public DbSet<Produto> Produtos { get; set; }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Produto>().HasQueryFilter(p => !p.IsDelete);
+    }
+
 }
